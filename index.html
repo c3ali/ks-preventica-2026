@@ -46,6 +46,10 @@ body{
 /* ---------- Hero : visuel officiel inchangé ---------- */
 .hero{padding:0;background:var(--white);line-height:0}
 .hero img{width:100%;height:auto;display:block}
+.hero a{display:block;line-height:0}
+.hero a:hover img{opacity:.93}
+.hero .hint{line-height:1.4;text-align:center;font-size:12.5px;color:var(--navy-soft);
+  padding:11px 20px;background:var(--paper);border-bottom:1px solid var(--line)}
 
 /* ---------- Bandeau ---------- */
 .band{background:linear-gradient(135deg,var(--navy) 0%,#1F3B6B 100%);color:#fff;
@@ -91,6 +95,18 @@ body{
   text-decoration:none;font-weight:500}
 .cta2:hover{color:var(--navy);text-decoration:underline}
 
+/* ---------- Partage ---------- */
+.share{margin-top:24px;padding-top:22px;border-top:1px solid var(--line);
+  display:flex;gap:10px;flex-wrap:wrap}
+.wa,.copy{flex:1;min-width:210px;text-align:center;text-decoration:none;cursor:pointer;
+  font-family:inherit;font-size:15px;font-weight:700;padding:15px 18px;border-radius:12px;
+  border:1px solid var(--line);background:var(--white);color:var(--navy);
+  transition:background .12s ease,border-color .12s ease}
+.wa{background:#25D366;border-color:#25D366;color:#fff}
+.wa:hover{background:#1eb355}
+.copy:hover{background:var(--paper);border-color:var(--teal)}
+.copy.done{background:var(--teal);border-color:var(--teal);color:#fff}
+
 /* ---------- Stand highlight ---------- */
 .stand{margin:0 0 26px;border-radius:14px;overflow:hidden;
   border:1px solid var(--line);background:var(--paper);text-align:center;padding:22px 18px}
@@ -118,11 +134,16 @@ body{
 <body>
 <div class="wrap">
 
-  <!-- 1. Le visuel officiel K&S / Préventica, inchangé -->
+  <!-- 1. Le visuel officiel K&S / Préventica, inchangé.
+       Le visuel est lui-même cliquable : il mène à l'inscription du badge (code exposant K&S). -->
   <div class="hero">
-    <img src="img/invitation-ks-preventica-2026.jpg"
-         alt="Invitation K&S CONSULTING - Stand G09 - Atelier - Préventica Maroc 2026"
-         width="1080" height="600">
+    <a href="https://preventica.ma/participer?origin=EIX226707" target="_blank" rel="noopener"
+       aria-label="Obtenir mon badge visiteur gratuit - Préventica Maroc 2026">
+      <img src="img/invitation-ks-preventica-2026.jpg"
+           alt="Invitation K&S CONSULTING - Stand G09 - Atelier - Préventica Maroc 2026"
+           width="1080" height="600">
+    </a>
+    <div class="hint">Touchez le visuel pour obtenir votre badge visiteur gratuit</div>
   </div>
 
   <!-- 2. Bandeau titre -->
@@ -190,6 +211,12 @@ body{
       En savoir plus sur Préventica Maroc 2026 &nbsp;→&nbsp; preventica.ma
     </a>
 
+    <!-- 6. Partage -->
+    <div class="share">
+      <a class="wa" id="waShare" target="_blank" rel="noopener">Partager sur WhatsApp</a>
+      <button class="copy" type="button" id="copyBtn">Copier le message</button>
+    </div>
+
   </div>
 
   <div class="foot">
@@ -203,5 +230,44 @@ body{
   </div>
 
 </div>
+
+<script>
+(function(){
+  var PAGE = "https://c3ali.github.io/ks-preventica-2026/";
+  var MSG = "K&S CONSULTING a le plaisir de vous inviter à Préventica Maroc 2026, l'événement de référence en Afrique pour la Santé au Travail et la Sécurité Globale.\n\n"
+          + "10, 11, 12 Novembre 2026\n"
+          + "Foire Internationale de Casablanca\n"
+          + "Stand G09 - Atelier\n"
+          + "9h à 18h : mardi, mercredi - 9h à 17h : jeudi\n\n"
+          + "80 conférences • 200 exposants • 6500 visiteurs\n\n"
+          + "Badge visiteur gratuit :\n" + PAGE;
+
+  // Lien de partage WhatsApp (le message + l'URL de la page : aperçu riche avec le visuel)
+  var share = document.getElementById('waShare');
+  if (share) share.href = "https://wa.me/?text=" + encodeURIComponent(MSG);
+
+  // Copie du message dans le presse-papiers
+  var btn = document.getElementById('copyBtn');
+  if (!btn) return;
+  btn.addEventListener('click', function(){
+    var ok = function(){
+      btn.textContent = 'Message copié ✓';
+      btn.classList.add('done');
+      setTimeout(function(){ btn.textContent = 'Copier le message'; btn.classList.remove('done'); }, 2200);
+    };
+    var fallback = function(){
+      var ta = document.createElement('textarea');
+      ta.value = MSG; ta.setAttribute('readonly','');
+      ta.style.position = 'absolute'; ta.style.left = '-9999px';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); ok(); } catch(e){ btn.textContent = 'Copie impossible'; }
+      document.body.removeChild(ta);
+    };
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(MSG).then(ok, fallback);
+    } else { fallback(); }
+  });
+})();
+</script>
 </body>
 </html>
